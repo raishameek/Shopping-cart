@@ -1,0 +1,104 @@
+import React, { useState } from 'react';
+
+const Navbar = ({ onSearch }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    onSearch(searchTerm);
+  };
+
+  return (
+    <nav className="navbar">
+      <div className="logo">Shopping Cart</div>
+      <form onSubmit={handleSearch}>
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.target.value)}
+        />
+        <button type="submit">Search</button>
+      </form>
+      <div className="filters">
+        <select>
+          <option value="">All</option>
+          <option value="electronics">Electronics</option>
+          <option value="clothing">Clothing</option>
+          <option value="books">Books</option>
+        </select>
+        <select>
+          <option value="">Price: Low to High</option>
+          <option value="high-low">Price: High to Low</option>
+        </select>
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;
+
+import React, { useState } from 'react';
+
+const Product = ({ id, name, price, onAddToCart }) => {
+  const [quantity, setQuantity] = useState(1);
+
+  const handleAddToCart = () => {
+    onAddToCart({ id, name, price, quantity });
+  };
+
+  const handleIncrementQuantity = () => {
+    setQuantity(quantity + 1);
+  };
+
+  const handleDecrementQuantity = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
+
+  return (
+    <div className="product">
+      <h2>{name}</h2>
+      <p>Price: ${price}</p>
+      <div className="quantity">
+        <button onClick={handleDecrementQuantity}>-</button>
+        <span>{quantity}</span>
+        <button onClick={handleIncrementQuantity}>+</button>
+      </div>
+      <button onClick={handleAddToCart}>Add to Cart</button>
+    </div>
+  );
+};
+
+export default Product;
+
+
+import React, { useState } from 'react';
+
+const Cart = () => {
+  const [items, setItems] = useState([]);
+
+  const addItem = (item) => {
+    setItems([...items, item]);
+  };
+
+  const removeItem = (id) => {
+    setItems(items.filter((item) => item.id !== id));
+  };
+
+  const updateQuantity = (id, newQuantity) => {
+    setItems(
+      items.map((item) =>
+        item.id === id ? { ...item, quantity: newQuantity } : item
+      )
+    );
+  };
+
+  const totalPrice = items.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  return (
+    <div className="cart">
+      <h1>Shopping Cart</h1>
+      <ul>
+        {items.map((item)
